@@ -30,22 +30,30 @@ namespace LACRM_Mautic
         public string MauticHostAddress { get; set; }
         public string LACRMHostAddress { get; set; }
 
-        //public static string MauticHostAddress = "ec2-34-236-159-214.compute-1.amazonaws.com/";
-        //public static string LACRMHostAddress" = "https://api.lessannoyingcrm.com/?UserCode=44F62&amp;APIToken=4YDJ4WS12N4DQ7B2VWQBKD0WJCB8D7SZ1NNBGZ47PB63V1G1JF&amp;
+        //public  string MauticHostAddress = "ec2-34-236-159-214.compute-1.amazonaws.com/";
+        //public static string LACRMHostAddress" = "https://api.lessannoyingcrm.com/?UserCode=44F62&APIToken=4YDJ4WS12N4DQ7B2VWQBKD0WJCB8D7SZ1NNBGZ47PB63V1G1JF&;
 
+        
     }
-  
+    public static class Globals
+    {
+        public static readonly String MauticHostAddress = "http://ec2-34-236-159-214.compute-1.amazonaws.com/";
+        public static readonly String LACRMHostAddress =
+                "https://api.lessannoyingcrm.com/?UserCode=44F62&APIToken=4YDJ4WS12N4DQ7B2VWQBKD0WJCB8D7SZ1NNBGZ47PB63V1G1JF&";
+    }
 
+ 
     internal class Program
     {
-        
+       httpAddresses serviceLocations = new httpAddresses();
+
         private static void Main(string[] args)
         {
-            httpAddresses serviceLocations = new httpAddresses();
-            serviceLocations.MauticHostAddress = "http://ec2-34-236-159-214.compute-1.amazonaws.com/";
-            serviceLocations.LACRMHostAddress = "https://api.lessannoyingcrm.com/?UserCode=44F62&amp;APIToken=4YDJ4WS12N4DQ7B2VWQBKD0WJCB8D7SZ1NNBGZ47PB63V1G1JF&amp";
+            //httpAddresses serviceLocations = new httpAddresses();
+          //  serviceLocations.MauticHostAddress = "http://ec2-34-236-159-214.compute-1.amazonaws.com/";
+            //serviceLocations.LACRMHostAddress = "https://api.lessannoyingcrm.com/?UserCode=44F62&amp;APIToken=4YDJ4WS12N4DQ7B2VWQBKD0WJCB8D7SZ1NNBGZ47PB63V1G1JF&amp";
 
-            var mauticCompanies = new RestClient(serviceLocations.MauticHostAddress + "api/companies");
+            var mauticCompanies = new RestClient(Globals.MauticHostAddress + "api/companies");
             
             var request = new RestRequest(Method.GET);
             request.AddHeader("postman-token", "2c0f8356-451f-114f-4320-276791d02f49");
@@ -61,28 +69,30 @@ namespace LACRM_Mautic
                 Console.WriteLine(token.Path + ": " + token);
 
             // go thru the data in the CRM system 
-            var getContacts =
-                new RestClient(serviceLocations.LACRMHostAddress + "&Function = SearchContacts & NumRows = 500 & Page = 1 % 22");
-                   // "https://api.lessannoyingcrm.com/?UserCode=44F62&APIToken=4YDJ4WS12N4DQ7B2VWQBKD0WJCB8D7SZ1NNBGZ47PB63V1G1JF&Function=SearchContacts&NumRows=500&Page=1%22");
-            var contactRequest = new RestRequest(Method.GET);
-            request.AddHeader("postman-token", "4c77876a-c1d2-bc8c-278e-94124de4f0b3");
-            request.AddHeader("cache-control", "no-cache");
-            request.AddHeader("authorization", "Basic Q2FybG9zIEdhbGFyY2U6aWxvdmVhdGxhcw==");
-            var contactResponse = getContacts.Execute(contactRequest);
+            //var getContacts =
+            //    new RestClient(serviceLocations.LACRMHostAddress + "&Function = SearchContacts & NumRows = 500 & Page = 1 % 22");
+            //       // "https://api.lessannoyingcrm.com/?UserCode=44F62&APIToken=4YDJ4WS12N4DQ7B2VWQBKD0WJCB8D7SZ1NNBGZ47PB63V1G1JF&Function=SearchContacts&NumRows=500&Page=1%22");
+            //var contactRequest = new RestRequest(Method.GET);
+            //request.AddHeader("postman-token", "4c77876a-c1d2-bc8c-278e-94124de4f0b3");
+            //request.AddHeader("cache-control", "no-cache");
+            //request.AddHeader("authorization", "Basic Q2FybG9zIEdhbGFyY2U6aWxvdmVhdGxhcw==");
+            //var contactResponse = getContacts.Execute(contactRequest);
 
-            var contactsList = JsonConvert.DeserializeObject<dynamic>(contactResponse.Content);
+            //var contactsList = JsonConvert.DeserializeObject<dynamic>(contactResponse.Content);
 
-            var contactsObject = JObject.Parse(contactResponse.Content);
+            //var contactsObject = JObject.Parse(contactResponse.Content);
 
-            var companiesArray = companiesList.companies;
-            // JArray compArray = JArray.Parse(companiesArray.ToString());
+            //var companiesArray = companiesList.companies;
+            //// JArray compArray = JArray.Parse(companiesArray.ToString());
 
-            //Console.WriteLine(companiesList.data);
+            ////Console.WriteLine(companiesList.data);
 
+            var lacrmHttpCall = Globals.LACRMHostAddress + "Function=SearchContacts&Parameters={\"NumRows\":\"500\"}";
             var client = new WebClient();
             var stream =
-                client.OpenRead(
-                    "https://api.lessannoyingcrm.com?UserCode=44F62&APIToken=4YDJ4WS12N4DQ7B2VWQBKD0WJCB8D7SZ1NNBGZ47PB63V1G1JF&Function=SearchContacts&Parameters={\"NumRows\":\"500\"}");
+                client.OpenRead(lacrmHttpCall);
+            // "https://api.lessannoyingcrm.com?UserCode=44F62&APIToken=4YDJ4WS12N4DQ7B2VWQBKD0WJCB8D7SZ1NNBGZ47PB63V1G1JF&Function=SearchContacts&Parameters={\"NumRows\":\"500\"}");
+           // Globals.LACRMHostAddress+"Function=SearchContacts&Parameters={\"NumRows\":\"500\"}");
             using (var reader = new StreamReader(stream))
             {
                 var jsonString = reader.ReadLine();
@@ -240,15 +250,35 @@ namespace LACRM_Mautic
                         contact.mobile = mobilePhone;
 
                         var contactObject = JObject.Parse(array[i].ToString());
-                        var data = LACRMContactObject.FromJson(array[i].ToString());
-                        
+
+                        string storedCrmMauticId = "0";
+                        string mID, mMs, mUDT;
+
                         // First get the MauticID
-                        string storedCrmMauticId = data.CustomFields.MauticID != null ? data.CustomFields.MauticID.ToString() : "0";
+                        var crmMauticId = contactObject.FindTokens("MauticID");
+                        
+                        if (crmMauticId.Count > 0)
+                        {
+                            if (!string.IsNullOrEmpty(crmMauticId[0].ToString()))
+                            {
+                                storedCrmMauticId = crmMauticId[0].ToString();
+                            }
+                        }
+                        //  GetCustomFields(array, i, out mID, out mMs, out mUDT);
+                        //var data = LACRMContactObject.FromJson(array[i].ToString());
+
+                        //string storedCrmMauticId = "0";
+                        //// First get the MauticID
+                        //if(data.CustomFields != null)
+                        //{
+                        //    storedCrmMauticId = data.CustomFields.MauticID != null ? data.CustomFields.MauticID.ToString() : "0";
+                        //}
+
 
                         // RemoveEmpty(JsonConvert.SerializeObject(contact));
 
                         // create the JSON object to send to Mautic to create the contact object */
-                       string json = JsonConvert.SerializeObject(contact);
+                        string json = JsonConvert.SerializeObject(contact);
 
                         // Make sure that no Nulls are in the object before we Upload to Mautic
                         var deserializedObject = JsonConvert.DeserializeObject<MauticContact>(json);
@@ -317,7 +347,8 @@ namespace LACRM_Mautic
                                     ",\"MauticUpdateDateTime\":\"" + mauticUpdateDateTime + "\"" +
                                     ",\"MauticID\":\"" + mauticID + "\"} }";
             string postRequest =
-                "https://api.lessannoyingcrm.com/?UserCode=44F62&APIToken=4YDJ4WS12N4DQ7B2VWQBKD0WJCB8D7SZ1NNBGZ47PB63V1G1JF&Function=EditContact&Parameters=" +
+                 //"https://api.lessannoyingcrm.com/?UserCode=44F62&APIToken=4YDJ4WS12N4DQ7B2VWQBKD0WJCB8D7SZ1NNBGZ47PB63V1G1JF&Function=EditContact&Parameters="
+                 Globals.LACRMHostAddress+"Function=EditContact&Parameters=" +
                 crmUpdateParms;
 
             var client = new RestClient(postRequest);
@@ -377,6 +408,31 @@ namespace LACRM_Mautic
                     if ((string) phones[j]["Type"] == phoneType)
                     {
                         phone = (string) phones[j]["Text"] != null ? (string) phones[j]["Text"] : "";
+                        break;
+                    }
+
+                    // Console.WriteLine("Email address = {0}, Type = {1}", email, emailAddresses[j]["Type"]);
+                }
+            }
+        }
+
+        private static void GetCustomFields(JArray array, int i, out string mauticId, out string mauticStage, out string mauticUpdateDateTime)
+        {
+            var customFieldsExist = array[i]["CustomFields"];
+
+            mauticId = "0";
+            mauticStage = "Blank";
+            mauticUpdateDateTime = "0";
+
+            if (customFieldsExist.HasValues)
+            {
+                var customFields = (JArray)array[i]["CustomFields"];
+
+                for (var j = 0; j < customFields.Count; j++)
+                {
+                    if ((string)customFields[j]["MauticID"] == "MauticID")
+                    {
+                        mauticId = (string)customFields[j]["Text"] != null ? (string)customFields[j]["Text"] : "";
                         break;
                     }
 
@@ -447,8 +503,8 @@ namespace LACRM_Mautic
         private static bool PublishContactToMautic(string json, string crmStoredMauticId, out string mauticID, out string mauticStage,
             out string mauticUpdateDateTime)
         {
-            // string webCall = "http://54.210.98.34/api/contacts/" + crmStoredMauticId + "/edit";
-            string webCall = "http://54.210.98.34/api/contacts/" + crmStoredMauticId + "/edit";
+            // string webCall = "http://54.210.98.34/api/contacts" + crmStoredMauticId + "/edit";
+            string webCall = Globals.MauticHostAddress + "api/contacts/" + crmStoredMauticId + "/edit";
             var client = new RestClient(webCall);
             var request = new RestRequest(Method.PUT);
             //var client = new RestClient("http://54.210.98.34/api/contacts/new");
@@ -491,7 +547,7 @@ namespace LACRM_Mautic
         private static bool PublishCompanyToMautic(string json, string crmStoredMautidId, out string mauticID, out string mauticStage,
             out string mauticUpdateDateTime)
         {
-            string webCall = "http://54.210.98.34/api/companies/" + crmStoredMautidId +"/edit";
+            string webCall = Globals.MauticHostAddress + "api/companies/" + crmStoredMautidId +"/edit";
             var client = new RestClient(webCall);
             var request = new RestRequest(Method.PUT);
             request.AddHeader("postman-token", "f1717cfc-b823-f0a8-3f30-26e9a0a0f239");
